@@ -1,0 +1,85 @@
+{% extends "hospital/doctor_base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="text-center mb-5">
+                <h2 class="text-primary">Now Serving</h2>
+                <p class="text-muted">Current patient in consultation</p>
+            </div>
+            
+            {% if current %}
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h1 class="display-1 fw-bold mb-0">#{{ current.token_number }}</h1>
+                </div>
+                <div class="card-body p-5 text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-user-circle fa-5x text-primary mb-3"></i>
+                        <h3 class="mb-1">{{ current.patient.get_name }}</h3>
+                        {% if current.department %}
+                        <span class="badge bg-primary bg-opacity-10 text-primary p-2 mt-2">
+                            <i class="fas fa-stethoscope me-2"></i>{{ current.department }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-grid gap-3 mt-4">
+                        <a href="/doctor-queue/" class="btn btn-outline-primary">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Queue
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer bg-light text-center py-3">
+                    <small class="text-muted">
+                        <i class="far fa-clock me-1"></i> 
+                        {{ current.created_at|time:"h:i A" }}
+                    </small>
+                </div>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <div class="mb-4">
+                    <i class="fas fa-user-clock fa-5x text-muted mb-3"></i>
+                    <h4>No patient in consultation</h4>
+                    <p class="text-muted">Please call the next patient from the queue.</p>
+                </div>
+                <a href="/doctor-queue/" class="btn btn-primary">
+                    <i class="fas fa-list-ul me-2"></i>View Queue
+                </a>
+            </div>
+            {% endif %}
+            
+            <div class="text-center mt-4">
+                <small class="text-muted">
+                    <i class="fas fa-sync-alt me-1"></i> Auto-refreshing in <span id="countdown">30</span>s
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Auto-refresh every 30 seconds -->
+<script>
+    // Countdown timer
+    let timeLeft = 30;
+    const countdownElement = document.getElementById('countdown');
+    
+    const countdown = setInterval(function() {
+        timeLeft--;
+        countdownElement.textContent = timeLeft;
+        
+        if (timeLeft <= 0) {
+            clearInterval(countdown);
+            window.location.reload();
+        }
+    }, 1000);
+    
+    // Full refresh every 30 seconds
+    setTimeout(function() {
+        window.location.reload();
+    }, 30000);
+</script>
+{% endblock content %}

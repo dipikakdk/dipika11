@@ -1,0 +1,151 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="color-scheme" content="light">
+    <title>{% block title %}Hospital Management - {% endblock %}Django Administration</title>
+
+    <!-- Custom CSS for Hospital Management System -->
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/custom_admin.css' %}">
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    {% block extrahead %}{% endblock %}
+    {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE">{% endblock %}
+</head>
+
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}"
+      data-admin-utc-offset="{% now "Z" %}">
+    <!-- Container -->
+    <div id="container">
+
+        {% if not is_popup %}
+        <!-- Header -->
+        <div id="header">
+            <div id="branding">
+                <h1 id="site-name">
+                    Hospital Management System
+                </h1>
+            </div>
+            <div id="user-tools">
+                Welcome, <strong>{% firstof user.get_short_name user.get_username %}</strong>.
+                {% block userlinks %}
+                    {% url 'admin:logout' as logout_url %}
+                    {% if logout_url %}
+                        <form method="post" action="{{ logout_url }}" style="display: inline-block; margin: 0;">
+                            {% csrf_token %}
+                            <button type="submit" class="logout-btn">Log out</button>
+                        </form>
+                    {% endif %}
+                {% endblock %}
+            </div>
+            {% block nav-global %}{% endblock %}
+        </div>
+        <!-- END Header -->
+        {% endif %}
+
+        <div class="main{% if is_popup %} popup{% endif %}">
+            {% if not is_popup %}
+            <!-- Sidebar -->
+            <div id="navigation">
+                <h2><i class="fas fa-compass" style="margin-right: 8px;"></i>Navigation</h2>
+                <ul>
+                    {% block navigation %}
+                        <li><a href="{% url 'admin:index' %}"><i class="fas fa-home" style="margin-right: 8px;"></i>Home</a></li>
+                        <li class="section">
+                            <h3><i class="fas fa-shield-alt" style="margin-right: 8px;"></i>Authentication and Authorization</h3>
+                            <ul>
+                                <li><a href="{% url 'admin:auth_user_changelist' %}"><i class="fas fa-users" style="margin-right: 8px;"></i>Users</a></li>
+                                <li><a href="{% url 'admin:auth_group_changelist' %}"><i class="fas fa-layer-group" style="margin-right: 8px;"></i>Groups</a></li>
+                            </ul>
+                        </li>
+                        <li class="section">
+                            <h3><i class="fas fa-hospital" style="margin-right: 8px;"></i>Hospital Management</h3>
+                            <ul>
+                                <li><a href="{% url 'admin:hospital_doctor_changelist' %}"><i class="fas fa-user-md" style="margin-right: 8px;"></i>Doctors</a></li>
+                                <li><a href="{% url 'admin:hospital_patient_changelist' %}"><i class="fas fa-user-injured" style="margin-right: 8px;"></i>Patients</a></li>
+                                <li><a href="{% url 'admin:hospital_appointment_changelist' %}"><i class="fas fa-calendar-check" style="margin-right: 8px;"></i>Appointments</a></li>
+                                <li><a href="{% url 'admin:hospital_queuetoken_changelist' %}" class="queue-link">
+                                    <i class="fas fa-list-ol" style="margin-right: 8px;"></i>Queue Tokens
+                                </a></li>
+                                <li><a href="{% url 'admin:hospital_patientdischargedetails_changelist' %}"><i class="fas fa-file-medical" style="margin-right: 8px;"></i>Discharge Details</a></li>
+                            </ul>
+                        </li>
+                    {% endblock %}
+                </ul>
+            </div>
+            <!-- END Sidebar -->
+
+            <div class="content-wrapper">
+                <div id="content">
+                    {% endif %}
+
+                    {% block breadcrumbs %}
+                    <div class="breadcrumbs">
+                        <a href="{% url 'admin:index' %}" class="breadcrumb-home">
+                            <i class="fas fa-home"></i>
+                        </a>
+                        {% for breadcrumb in breadcrumbs %}
+                            <span class="breadcrumb-separator">›</span>
+                            <a href="{{ breadcrumb.url }}" class="breadcrumb-link">{{ breadcrumb.title }}</a>
+                        {% endfor %}
+                    </div>
+                    {% endblock %}
+
+                    {% block messages %}
+                        {% if messages %}
+                            <div class="messages-container">
+                                {% for message in messages %}
+                                    <div class="message {{ message.tags }} animate-in">
+                                        <i class="fas fa-{% if message.tags == 'error' %}exclamation-triangle{% elif message.tags == 'success' %}check-circle{% elif message.tags == 'warning' %}exclamation-circle{% else %}info-circle{% endif %}" style="margin-right: 8px;"></i>
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endblock messages %}
+
+                    <!-- Content -->
+                    <div class="{% block coltype %}colM{% endblock %}">
+                        {% block pretitle %}{% endblock %}
+                        {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
+                        {% block content %}
+                        {% endblock %}
+                        {% block sidebar %}{% endblock %}
+                        <br class="clear">
+                    </div>
+                    <!-- END Content -->
+                    {% if not is_popup %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Footer -->
+        {% block footer %}
+        <div id="footer">
+            <div class="footer-content">
+                <div class="footer-left">
+                    <p>&copy; {% now "Y" %} Hospital Management and Queue System. All rights reserved.</p>
+                </div>
+                <div class="footer-right">
+                    <p>Built with <i class="fas fa-heart" style="color: #ef4444;"></i> using Django</p>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+        <!-- END Footer -->
+
+    </div>
+    <!-- END Container -->
+
+    <!-- Custom JavaScript -->
+    <script src="{% static 'admin/js/custom_admin.js' %}"></script>
+</body>
+</html>

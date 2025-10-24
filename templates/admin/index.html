@@ -1,0 +1,408 @@
+{% extends "admin/base.html" %}
+{% load i18n static %}
+
+{% block title %}Hospital Management - Site Administration{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <i class="fas fa-hospital me-2"></i>
+    Hospital Management System
+</h1>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="dashboard-header">
+        <h2>Site Administration</h2>
+        <p class="dashboard-subtitle">Manage your hospital system efficiently</p>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- Authentication Section -->
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h3><i class="fas fa-users me-2"></i>Authentication and Authorization</h3>
+            </div>
+            <div class="section-content">
+                <div class="app-item">
+                    <a href="{% url 'admin:auth_user_changelist' %}" class="app-link">
+                        <i class="fas fa-user-md"></i>
+                        <div class="app-info">
+                            <span class="app-name">Users</span>
+                            <span class="app-description">Manage system users and permissions</span>
+                        </div>
+                        <span class="app-count">{{ user_count|default:0 }}</span>
+                    </a>
+                </div>
+                <div class="app-item">
+                    <a href="{% url 'admin:auth_group_changelist' %}" class="app-link">
+                        <i class="fas fa-layer-group"></i>
+                        <div class="app-info">
+                            <span class="app-name">Groups</span>
+                            <span class="app-description">Organize users into groups</span>
+                        </div>
+                        <span class="app-count">{{ group_count|default:0 }}</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hospital Management Section -->
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h3><i class="fas fa-hospital me-2"></i>Hospital Management</h3>
+            </div>
+            <div class="section-content">
+                <div class="app-item">
+                    <a href="{% url 'admin:hospital_doctor_changelist' %}" class="app-link">
+                        <i class="fas fa-user-md"></i>
+                        <div class="app-info">
+                            <span class="app-name">Doctors</span>
+                            <span class="app-description">Manage medical staff and departments</span>
+                        </div>
+                        <span class="app-count">{{ doctor_count|default:0 }}</span>
+                    </a>
+                </div>
+                <div class="app-item">
+                    <a href="{% url 'admin:hospital_patient_changelist' %}" class="app-link">
+                        <i class="fas fa-user-injured"></i>
+                        <div class="app-info">
+                            <span class="app-name">Patients</span>
+                            <span class="app-description">Patient records and information</span>
+                        </div>
+                        <span class="app-count">{{ patient_count|default:0 }}</span>
+                    </a>
+                </div>
+                <div class="app-item">
+                    <a href="{% url 'admin:hospital_appointment_changelist' %}" class="app-link">
+                        <i class="fas fa-calendar-alt"></i>
+                        <div class="app-info">
+                            <span class="app-name">Appointments</span>
+                            <span class="app-description">Schedule and manage appointments</span>
+                        </div>
+                        <span class="app-count">{{ appointment_count|default:0 }}</span>
+                    </a>
+                </div>
+                <div class="app-item featured">
+                    <a href="{% url 'admin:hospital_queuetoken_changelist' %}" class="app-link">
+                        <i class="fas fa-list-ol"></i>
+                        <div class="app-info">
+                            <span class="app-name">Queue Tokens</span>
+                            <span class="app-description">Monitor patient queue system</span>
+                        </div>
+                        <span class="app-count">{{ queue_count|default:0 }}</span>
+                    </a>
+                </div>
+                <div class="app-item">
+                    <a href="{% url 'admin:hospital_patientdischargedetails_changelist' %}" class="app-link">
+                        <i class="fas fa-file-medical"></i>
+                        <div class="app-info">
+                            <span class="app-name">Discharge Details</span>
+                            <span class="app-description">Patient discharge records</span>
+                        </div>
+                        <span class="app-count">{{ discharge_count|default:0 }}</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Actions Section -->
+    {% if recent_actions %}
+    <div class="recent-actions">
+        <div class="section-header">
+            <h3><i class="fas fa-clock me-2"></i>Recent Actions</h3>
+        </div>
+        <div class="recent-actions-content">
+            {% for action in recent_actions %}
+            <div class="action-item">
+                <span class="action-time">{{ action.time|date:"M d, H:i" }}</span>
+                <span class="action-description">{{ action }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Quick Stats -->
+    <div class="quick-stats">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-user-md"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-number">{{ doctor_count|default:0 }}</span>
+                <span class="stat-label">Active Doctors</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-user-injured"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-number">{{ patient_count|default:0 }}</span>
+                <span class="stat-label">Total Patients</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-list-ol"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-number">{{ queue_count|default:0 }}</span>
+                <span class="stat-label">Queue Tokens</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-number">{{ appointment_count|default:0 }}</span>
+                <span class="stat-label">Appointments</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.dashboard {
+    padding: 24px;
+    background: #f8f9fa;
+    min-height: calc(100vh - 64px);
+}
+
+.dashboard-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 32px;
+    border-radius: 16px;
+    margin-bottom: 32px;
+    text-align: center;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-header h2 {
+    margin: 0 0 8px 0;
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.dashboard-subtitle {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 16px;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-bottom: 32px;
+}
+
+.dashboard-section {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.section-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px 24px;
+    margin: 0;
+}
+
+.section-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.section-content {
+    padding: 24px;
+}
+
+.app-item {
+    margin-bottom: 16px;
+}
+
+.app-item:last-child {
+    margin-bottom: 0;
+}
+
+.app-link {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #374151;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.app-link:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.app-link.featured {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+}
+
+.app-link.featured:hover {
+    background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+    box-shadow: 0 8px 16px rgba(240, 147, 251, 0.3);
+}
+
+.app-link i {
+    font-size: 20px;
+    margin-right: 16px;
+    width: 24px;
+    text-align: center;
+}
+
+.app-info {
+    flex: 1;
+}
+
+.app-name {
+    display: block;
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+
+.app-description {
+    display: block;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+.app-count {
+    background: rgba(255, 255, 255, 0.2);
+    color: inherit;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    min-width: 40px;
+    text-align: center;
+}
+
+.recent-actions {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-bottom: 32px;
+}
+
+.recent-actions .section-header {
+    background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+}
+
+.action-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.action-item:last-child {
+    border-bottom: none;
+}
+
+.action-time {
+    color: #6b7280;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.action-description {
+    color: #374151;
+    font-size: 14px;
+}
+
+.quick-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+}
+
+.stat-card {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.stat-icon {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.stat-info {
+    flex: 1;
+}
+
+.stat-number {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    color: #1f2937;
+    line-height: 1;
+}
+
+.stat-label {
+    display: block;
+    font-size: 14px;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    .quick-stats {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    .dashboard-header {
+        padding: 24px;
+    }
+
+    .dashboard-header h2 {
+        font-size: 24px;
+    }
+}
+</style>
+{% endblock %}

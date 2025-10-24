@@ -1,0 +1,139 @@
+{% extends "hospital/admin_base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="container-fluid bg-primary my-5">
+    <div class="container">
+        <div class="text-center mx-auto mb-5" style="max-width: 500px;">
+            <h5 class="d-inline-block text-white text-uppercase border-bottom border-5">Today's Queue</h5>
+        </div>
+        
+        <div class="row g-5">
+            <!-- Waiting Patients -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow">
+                    <div class="card-header bg-warning text-dark text-center">
+                        <h4 class="mb-0">Waiting</h4>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Token</th>
+                                        <th>Patient</th>
+                                        <th>Dept</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for token in tokens_waiting %}
+                                <tr>
+                                    <td class="fw-bold">#{{ token.token_number }}</td>
+                                    <td>{{ token.patient.get_name }}</td>
+                                    <td>{{ token.department|default:"-" }}</td>
+                                    <td>
+                                        <a href="{% url 'update_token_status' token.id 'called' %}" class="btn btn-sm btn-primary">
+                                            Call
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center py-4">No patients waiting</td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Called Patients -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow">
+                    <div class="card-header bg-info text-white text-center">
+                        <h4 class="mb-0">In Consultation</h4>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Token</th>
+                                        <th>Patient</th>
+                                        <th>Time</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for token in tokens_called %}
+                                <tr>
+                                    <td class="fw-bold">#{{ token.token_number }}</td>
+                                    <td>{{ token.patient.get_name }}</td>
+                                    <td>{{ token.created_at|time:"H:i" }}</td>
+                                    <td>
+                                        <a href="{% url 'update_token_status' token.id 'completed' %}" class="btn btn-sm btn-success">
+                                            Done
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center py-4">No patients in consultation</td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Completed -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow">
+                    <div class="card-header bg-secondary text-white text-center">
+                        <h4 class="mb-0">Completed</h4>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Token</th>
+                                        <th>Patient</th>
+                                        <th>Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for token in tokens_done %}
+                                <tr>
+                                    <td class="fw-bold">#{{ token.token_number }}</td>
+                                    <td>{{ token.patient.get_name }}</td>
+                                    <td>{{ token.created_at|time:"H:i" }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3" class="text-center py-4">No completed consultations</td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Auto-refresh every 30 seconds -->
+<script>
+    setTimeout(function() {
+        window.location.reload();
+    }, 30000);
+</script>
+
+{% endblock content %}

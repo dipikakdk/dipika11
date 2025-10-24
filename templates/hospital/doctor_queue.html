@@ -1,0 +1,351 @@
+{% extends 'hospital/doctor_base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+.queue-container {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    padding: 30px;
+    margin: 20px 0;
+}
+
+.queue-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.patient-card {
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.patient-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    border-color: #007bff;
+}
+
+.patient-card.current {
+    border-color: #28a745;
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+}
+
+.patient-card.called {
+    border-color: #17a2b8;
+    background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+}
+
+.patient-info h4 {
+    color: #495057;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.token-number {
+    background: linear-gradient(45deg, #6f42c1, #5a32a3);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 25px;
+    font-weight: 700;
+    font-size: 16px;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.status-badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-waiting {
+    background: linear-gradient(45deg, #ffc107, #ffb300);
+    color: #212529;
+}
+
+.status-called {
+    background: linear-gradient(45deg, #17a2b8, #138496);
+    color: white;
+}
+
+.status-current {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    color: white;
+}
+
+.department-badge {
+    background: linear-gradient(45deg, #6c757d, #5a6268);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 11px;
+    display: inline-block;
+    margin-top: 8px;
+}
+
+.queue-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.action-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-call {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    color: white;
+}
+
+.btn-call:hover {
+    background: linear-gradient(45deg, #0056b3, #004085);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+}
+
+.btn-complete {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    color: white;
+}
+
+.btn-complete:hover {
+    background: linear-gradient(45deg, #20c997, #17a2b8);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40,167,69,0.3);
+}
+
+.btn-disabled {
+    background: #6c757d;
+    color: white;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.queue-stats {
+    background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.stat-item {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #495057;
+    margin-bottom: 8px;
+}
+
+.stat-label {
+    color: #6c757d;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.empty-queue {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6c757d;
+}
+
+.empty-queue i {
+    font-size: 4rem;
+    color: #dee2e6;
+    margin-bottom: 20px;
+}
+
+.refresh-btn {
+    background: linear-gradient(45deg, #17a2b8, #138496);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+}
+
+.refresh-btn:hover {
+    background: linear-gradient(45deg, #138496, #117a8b);
+    transform: translateY(-2px);
+    color: white;
+    text-decoration: none;
+}
+</style>
+
+<div class="container-fluid">
+    <!-- Queue Header -->
+    <div class="queue-header">
+        <h2><i class="fas fa-list-ol me-2"></i>{{ doctor.department }} Department Queue</h2>
+        <p class="mb-0">Manage patient consultations and queue flow</p>
+    </div>
+
+    <!-- Queue Statistics -->
+    <div class="queue-stats">
+        <h4><i class="fas fa-chart-bar me-2"></i>Queue Statistics</h4>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number">{{ waiting_count }}</div>
+                <div class="stat-label">Patients Waiting</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">
+                    {% if called_patient %}
+                        1
+                    {% else %}
+                        0
+                    {% endif %}
+                </div>
+                <div class="stat-label">Currently Called</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">{{ waiting_count }}</div>
+                <div class="stat-label">Total in Queue</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Currently Called Patient -->
+    {% if called_patient %}
+    <div class="queue-container">
+        <h4><i class="fas fa-user-md me-2"></i>Currently in Consultation</h4>
+        <div class="patient-card called">
+            <div class="d-flex justify-content-between align-items-start">
+                <div class="patient-info">
+                    <div class="token-number">Token #{{ called_patient.token_number }}</div>
+                    <h4>{{ called_patient.patient.get_name }}</h4>
+                    <div class="department-badge">{{ called_patient.department }}</div>
+                </div>
+                <div class="status-badge status-current">
+                    <i class="fas fa-stethoscope me-1"></i>In Consultation
+                </div>
+            </div>
+            <div class="queue-actions">
+                <form method="post" action="/doctor-complete-consultation/{{ called_patient.id }}/" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="action-btn btn-complete">
+                        <i class="fas fa-check me-1"></i>Mark Complete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Waiting Patients Queue -->
+    <div class="queue-container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4><i class="fas fa-clock me-2"></i>Waiting Queue</h4>
+            <a href="/doctor-queue/" class="refresh-btn">
+                <i class="fas fa-sync-alt me-1"></i>Refresh Queue
+            </a>
+        </div>
+
+        {% if waiting_patients %}
+            {% for patient in waiting_patients %}
+            <div class="patient-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="patient-info">
+                        <div class="token-number">Token #{{ patient.token_number }}</div>
+                        <h4>{{ patient.patient.get_name }}</h4>
+                        <div class="department-badge">{{ patient.department }}</div>
+                        <small class="text-muted">
+                            <i class="fas fa-calendar me-1"></i>
+                            Joined: {{ patient.created_at|date:"M d, Y g:i A" }}
+                        </small>
+                    </div>
+                    <div class="status-badge status-waiting">
+                        <i class="fas fa-hourglass-half me-1"></i>Waiting
+                    </div>
+                </div>
+                <div class="queue-actions">
+                    <form method="post" action="/doctor-call-patient/{{ patient.id }}/" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="action-btn btn-call">
+                            <i class="fas fa-phone me-1"></i>Call Patient
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="empty-queue">
+            <i class="fas fa-check-circle"></i>
+            <h4>No Patients Waiting</h4>
+            <p>All patients in your department have been attended to.</p>
+            <a href="/doctor-queue/" class="refresh-btn">
+                <i class="fas fa-sync-alt me-1"></i>Refresh Queue
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Queue Management Tips -->
+    <div class="queue-container">
+        <h5><i class="fas fa-info-circle me-2"></i>Queue Management Tips</h5>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="text-center p-3">
+                    <i class="fas fa-phone fa-2x text-primary mb-2"></i>
+                    <h6>Call Patient</h6>
+                    <p class="small text-muted">Click "Call Patient" to notify the next patient for consultation</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-center p-3">
+                    <i class="fas fa-check fa-2x text-success mb-2"></i>
+                    <h6>Mark Complete</h6>
+                    <p class="small text-muted">Mark consultation as complete when finished</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-center p-3">
+                    <i class="fas fa-sync-alt fa-2x text-info mb-2"></i>
+                    <h6>Auto-Refresh</h6>
+                    <p class="small text-muted">Page auto-refreshes every 30 seconds</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

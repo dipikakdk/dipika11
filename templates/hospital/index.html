@@ -1,0 +1,253 @@
+{% extends 'hospital/homebase.html' %}
+{% load static %}
+
+{% block content %}
+
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style media="screen">
+    body {
+      background: #f8f9fc;
+    }
+
+    .dashboard-header {
+      background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+      color: white;
+      padding: 80px 0 60px;
+      margin-top: 56px;
+    }
+
+    .brand-name {
+      font-size: 1.5rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 0.5rem;
+      opacity: 0.9;
+    }
+
+    .dashboard-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .dashboard-subtitle {
+      font-size: 1rem;
+      opacity: 0.9;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .portal-card {
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      border: none;
+      margin-bottom: 30px;
+      overflow: hidden;
+    }
+
+    .portal-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+    }
+
+    .portal-card .card-body {
+      padding: 40px 30px;
+      text-align: center;
+    }
+
+    .portal-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      color: white;
+      font-size: 2rem;
+    }
+
+    .portal-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #2c3e50;
+    }
+
+    .portal-description {
+      color: #6c757d;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .portal-btn {
+      background: linear-gradient(45deg, #4e73df, #224abe);
+      border: none;
+      padding: 12px 30px;
+      border-radius: 25px;
+      color: white;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s ease;
+    }
+
+    .portal-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(78, 115, 223, 0.4);
+      color: white;
+      text-decoration: none;
+    }
+
+    .features-section {
+      background: white;
+      padding: 60px 0;
+      margin: 40px 0;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+
+    .feature-item {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      color: #4e73df;
+      margin-bottom: 15px;
+    }
+
+    .feature-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+
+    .feature-text {
+      color: #6c757d;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-header {
+        padding: 60px 0 40px;
+      }
+
+      .brand-name {
+        font-size: 1.2rem;
+      }
+
+      .dashboard-title {
+        font-size: 1.5rem;
+      }
+
+      .portal-card .card-body {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+
+<div class="dashboard-header text-center">
+  <div class="container">
+    <div class="brand-name">HealthBridge</div>
+    <h1 class="dashboard-title">Hospital Management & Queue System</h1>
+    <p class="dashboard-subtitle">
+      Streamlined healthcare management for administrators, doctors, and patients.
+      Experience efficient medical care coordination in one comprehensive platform.
+    </p>
+  </div>
+</div>
+
+<div class="container my-5">
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card portal-card">
+        <div class="card-body">
+          <div class="portal-icon" style="background: linear-gradient(135deg, #4e73df, #224abe);">
+            <i class="fas fa-user-shield"></i>
+          </div>
+          <h3 class="portal-title">Administrator</h3>
+          <p class="portal-description">
+            Complete hospital management system with doctor oversight, patient monitoring, and administrative controls.
+          </p>
+          <a href="/adminclick" class="portal-btn">Access Admin Panel</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card portal-card">
+        <div class="card-body">
+          <div class="portal-icon" style="background: linear-gradient(135deg, #1cc88a, #13855c);">
+            <i class="fas fa-user-md"></i>
+          </div>
+          <h3 class="portal-title">Doctor</h3>
+          <p class="portal-description">
+            Manage patient appointments, view medical records, and coordinate care with your healthcare team.
+          </p>
+          <a href="/doctorclick" class="portal-btn" style="background: linear-gradient(45deg, #1cc88a, #13855c);">Access Doctor Panel</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card portal-card">
+        <div class="card-body">
+          <div class="portal-icon" style="background: linear-gradient(135deg, #36b9cc, #258391);">
+            <i class="fas fa-user"></i>
+          </div>
+          <h3 class="portal-title">Patient</h3>
+          <p class="portal-description">
+            Book appointments, view medical history, and manage your healthcare journey with ease and convenience.
+          </p>
+          <a href="/patientclick" class="portal-btn" style="background: linear-gradient(45deg, #36b9cc, #258391);">Access Patient Portal</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="features-section">
+    <div class="container">
+      <h2 class="text-center mb-5" style="color: #2c3e50; font-weight: 700;">Key Features</h2>
+      <div class="row">
+        <div class="col-md-3">
+          <div class="feature-item">
+            <i class="fas fa-calendar-check feature-icon"></i>
+            <h4 class="feature-title">Appointment Management</h4>
+            <p class="feature-text">Easy scheduling and tracking of patient appointments</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="feature-item">
+            <i class="fas fa-list-ol feature-icon"></i>
+            <h4 class="feature-title">Queue System</h4>
+            <p class="feature-text">Efficient patient queue management and token generation</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="feature-item">
+            <i class="fas fa-file-medical feature-icon"></i>
+            <h4 class="feature-title">Medical Records</h4>
+            <p class="feature-text">Secure digital storage of patient medical history</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="feature-item">
+            <i class="fas fa-users-cog feature-icon"></i>
+            <h4 class="feature-title">Role Management</h4>
+            <p class="feature-text">Separate portals for admins, doctors, and patients</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

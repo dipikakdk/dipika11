@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+{% load widget_tweaks %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Update Doctor Profile - HMS</title>
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <h3 class="text-center">Update Doctor Profile</h3>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="{{ doctor_user_form.first_name.id_for_label }}">First Name</label>
+                {{ doctor_user_form.first_name|add_class:"form-control" }}
+                  <small class="text-danger">{{ doctor_user_form.first_name.errors.0 }}</small>
+                {% endif %}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="{{ doctor_user_form.last_name.id_for_label }}">Last Name</label>
+                {{ doctor_user_form.last_name|add_class:"form-control" }}
+                {% if doctor_user_form.last_name.errors %}
+                  <small class="text-danger">{{ doctor_user_form.last_name.errors.0 }}</small>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="{{ doctor_user_form.email.id_for_label }}">Email Address</label>
+            {{ doctor_user_form.email|add_class:"form-control" }}
+            {% if doctor_user_form.email.errors %}
+              <small class="text-danger">{{ doctor_user_form.email.errors.0 }}</small>
+            {% endif %}
+          </div>
+
+          <h5 class="section-title"><i class="fas fa-briefcase-medical"></i> Professional Information</h5>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="{{ doctor_form.department.id_for_label }}">Department</label>
+                {{ doctor_form.department|add_class:"form-control" }}
+                {% if doctor_form.department.errors %}
+                  <small class="text-danger">{{ doctor_form.department.errors.0 }}</small>
+                {% endif %}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="{{ doctor_form.mobile.id_for_label }}">Mobile Number</label>
+                {{ doctor_form.mobile|add_class:"form-control" }}
+                {% if doctor_form.mobile.errors %}
+                  <small class="text-danger">{{ doctor_form.mobile.errors.0 }}</small>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="{{ doctor_form.profile_pic.id_for_label }}">Profile Picture</label>
+            <div class="custom-file">
+              {{ doctor_form.profile_pic|add_class:"custom-file-input" }}
+              <label class="custom-file-label" for="{{ doctor_form.profile_pic.id_for_label }}">
+                {% if doctor_form.instance.profile_pic %}
+                  {{ doctor_form.instance.profile_pic.name|slice:"8:" }}
+                {% else %}
+                  Choose file
+                {% endif %}
+{{ ... }}
+            </div>
+            {% if doctor_form.instance.profile_pic %}
+              <small class="form-text text-muted">
+                Current: {{ doctor_form.instance.profile_pic.url|cut:'hospital/static/' }}
+              </small>
+            {% endif %}
+            {% if doctor_form.profile_pic.errors %}
+              <small class="text-danger">{{ doctor_form.profile_pic.errors.0 }}</small>
+            {% endif %}
+          </div>
+
+          <div class="form-group text-center">
+            <button type="submit" class="btnSubmit">
+              <i class="fas fa-save"></i> Save Changes
+            </button>
+            <div class="mt-3">
+              <a href="{% url 'password_change' %}" class="text-primary">
+                <i class="fas fa-key"></i> Change Password
+              </a>
+              <span class="mx-2">|</span>
+              <a href="{% url 'doctor-dashboard' %}" class="text-primary">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+              </a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+  <script>
+    // Update the file input label to show the selected filename
+    $(".custom-file-input").on("change", function() {
+      var fileName = $(this).val().split("\\").pop();
+      $(this).siblings(".custom-file-label").addClass("selected").html(fileName || 'Choose file');
+    });
+  </script>
+</body>
+
+</html>

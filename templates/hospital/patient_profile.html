@@ -1,0 +1,261 @@
+{% load widget_tweaks %}
+{% load auth_extras %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Update Patient Profile - HMS</title>
+  <style type="text/css">
+    body {
+      color: #aa082e;
+      background-color: #b6bde7;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    a:link {
+      text-decoration: none;
+    }
+
+    .note {
+      text-align: center;
+      height: 80px;
+      background: -webkit-linear-gradient(left, #0072ff, #8811c5);
+      color: #fff;
+      font-weight: bold;
+      line-height: 80px;
+      margin-bottom: 20px;
+    }
+
+    .form-content {
+      padding: 5%;
+      border: 1px solid #ced4da;
+      margin-bottom: 2%;
+      background: white;
+      border-radius: 5px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-control {
+      border-radius: 1.5rem;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ced4da;
+    }
+
+    .btnSubmit {
+      border: none;
+      border-radius: 1.5rem;
+      padding: 12px 25px;
+      cursor: pointer;
+      background: #0062cc;
+      color: #fff;
+      font-weight: 600;
+      width: 100%;
+      margin-top: 10px;
+      transition: all 0.3s;
+    }
+
+    .btnSubmit:hover {
+      background: #0056b3;
+      transform: translateY(-2px);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .text-center {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    .alert {
+      border-radius: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .section-title {
+      color: #007bff;
+      margin: 25px 0 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #dee2e6;
+    }
+
+    .custom-file-label::after {
+      content: 'Browse';
+      background-color: #e9ecef;
+      border-left: 1px solid #ced4da;
+      border-radius: 0 1.5rem 1.5rem 0;
+      padding: 0.375rem 0.75rem;
+    }
+
+    .custom-file {
+      margin-bottom: 15px;
+    }
+
+    .custom-file-label {
+      border-radius: 1.5rem;
+      padding: 0.375rem 1.75rem 0.375rem 0.75rem;
+    }
+
+    .text-primary {
+      color: #007bff !important;
+    }
+  </style>
+</head>
+
+<body>
+  {% include "hospital/navbar.html" %}
+  <br><br><br><br>
+
+  <div class="container register-form">
+    <div class="form">
+      <div class="note d-flex justify-content-between align-items-center">
+        <p class="mb-0">Update Patient Profile</p>
+        {% if request.user.is_authenticated %}
+          {% with user_groups=request.user.groups.all %}
+            {% if 'DOCTOR' in user_groups|join:"," %}
+            <form action="{% url 'hospital:generate_token' patient.id %}" method="post" class="mb-0">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-light btn-sm">
+                <i class="fas fa-ticket-alt me-1"></i> Generate Token
+              </button>
+            </form>
+            {% endif %}
+          {% endwith %}
+        {% endif %}
+      </div>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="form-content">
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          
+          <h5 class="section-title"><i class="fas fa-user-circle"></i> Personal Information</h5>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="{{ user_form.first_name.id_for_label }}">First Name</label>
+                {{ user_form.first_name|add_class:"form-control" }}
+                {% if user_form.first_name.errors %}
+                  <small class="text-danger">{{ user_form.first_name.errors.0 }}</small>
+                {% endif %}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="{{ user_form.last_name.id_for_label }}">Last Name</label>
+                {{ user_form.last_name|add_class:"form-control" }}
+                {% if user_form.last_name.errors %}
+                  <small class="text-danger">{{ user_form.last_name.errors.0 }}</small>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="{{ user_form.email.id_for_label }}">Email Address</label>
+            {{ user_form.email|add_class:"form-control" }}
+            {% if user_form.email.errors %}
+              <small class="text-danger">{{ user_form.email.errors.0 }}</small>
+            {% endif %}
+          </div>
+
+          <h5 class="section-title"><i class="fas fa-address-card"></i> Contact Information</h5>
+          
+          <div class="form-group">
+            <label for="{{ patient_form.address.id_for_label }}">Address</label>
+            {{ patient_form.address|add_class:"form-control" }}
+            {% if patient_form.address.errors %}
+              <small class="text-danger">{{ patient_form.address.errors.0 }}</small>
+            {% endif %}
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="{{ patient_form.mobile.id_for_label }}">Mobile Number</label>
+                {{ patient_form.mobile|add_class:"form-control" }}
+                {% if patient_form.mobile.errors %}
+                  <small class="text-danger">{{ patient_form.mobile.errors.0 }}</small>
+                {% endif %}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="{{ patient_form.dob.id_for_label }}">Date of Birth</label>
+                {{ patient_form.dob|add_class:"form-control" }}
+                {% if patient_form.dob.errors %}
+                  <small class="text-danger">{{ patient_form.dob.errors.0 }}</small>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="{{ patient_form.profile_pic.id_for_label }}">Profile Picture</label>
+            <div class="custom-file">
+              {{ patient_form.profile_pic|add_class:"custom-file-input" }}
+              <label class="custom-file-label" for="{{ patient_form.profile_pic.id_for_label }}">
+                {% if patient_form.instance.profile_pic %}
+                  {{ patient_form.instance.profile_pic.name|slice:"8:" }}
+                {% else %}
+                  Choose file
+                {% endif %}
+              </label>
+            </div>
+            {% if patient_form.instance.profile_pic %}
+              <small class="form-text text-muted">
+                Current: {{ patient_form.instance.profile_pic.url|cut:'hospital/static/' }}
+              </small>
+            {% endif %}
+            {% if patient_form.profile_pic.errors %}
+              <small class="text-danger">{{ patient_form.profile_pic.errors.0 }}</small>
+            {% endif %}
+          </div>
+
+          <div class="form-group text-center">
+            <button type="submit" class="btnSubmit">
+              <i class="fas fa-save"></i> Save Changes
+            </button>
+            <div class="mt-3">
+              <a href="{% url 'password_change' %}" class="text-primary">
+                <i class="fas fa-key"></i> Change Password
+              </a>
+              <span class="mx-2">|</span>
+              <a href="{% url 'patient-dashboard' %}" class="text-primary">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+              </a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+  <script>
+    // Update the file input label to show the selected filename
+    $(".custom-file-input").on("change", function() {
+      var fileName = $(this).val().split("\\").pop();
+      $(this).siblings(".custom-file-label").addClass("selected").html(fileName || 'Choose file');
+    });
+  </script>
+</body>
+
+</html>

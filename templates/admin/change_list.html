@@ -1,0 +1,546 @@
+{% extends "admin/base.html" %}
+{% load i18n admin_urls static admin_list %}
+
+{% block title %}Queue Token Management - Hospital Management System{% endblock %}
+
+{% block content %}
+<div class="queue-management">
+    <div class="page-header">
+        <div class="header-content">
+            <h1><i class="fas fa-list-ol me-2"></i>Queue Token Management</h1>
+            <p class="header-subtitle">Monitor and manage patient queue tokens across all departments</p>
+        </div>
+        <div class="header-actions">
+            <a href="{% url 'admin:hospital_queuetoken_add' %}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Add Token
+            </a>
+        </div>
+    </div>
+
+    <!-- Queue Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card waiting">
+            <div class="stat-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-number">{{ waiting_count|default:0 }}</span>
+                <span class="stat-label">Waiting</span>
+            </div>
+        </div>
+        <div class="stat-card called">
+            <div class="stat-icon">
+                <i class="fas fa-user-md"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-number">{{ called_count|default:0 }}</span>
+                <span class="stat-label">Called</span>
+            </div>
+        </div>
+        <div class="stat-card done">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-number">{{ done_count|default:0 }}</span>
+                <span class="stat-label">Completed</span>
+            </div>
+        </div>
+        <div class="stat-card total">
+            <div class="stat-icon">
+                <i class="fas fa-list-ol"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-number">{{ total_count|default:0 }}</span>
+                <span class="stat-label">Total Today</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="filters-section">
+        <div class="search-box">
+            <form method="get">
+                <div class="search-input-group">
+                    <i class="fas fa-search"></i>
+                    <input type="search" name="q" value="{{ cl.search_var }}" placeholder="Search patients, token numbers..." class="form-control">
+                    <button type="submit" class="btn btn-outline">Search</button>
+                </div>
+            </form>
+        </div>
+
+        {% if cl.has_filters %}
+        <div class="filters">
+            <div id="changelist-filter">
+                <h2>Filters</h2>
+                {% for spec in cl.filter_specs %}
+                    <h3>{{ spec.title }}</h3>
+                    {% for choice in spec.choices %}
+                        <div class="filter-choice">
+                            <a href="{{ choice.query_string|iriencode }}"{% if choice.selected %} class="selected"{% endif %}>
+                                {{ choice.display }}
+                            </a>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Queue Tokens Table -->
+    <div class="queue-table-container">
+        <form id="changelist-form" method="post" novalidate>
+            {% csrf_token %}
+
+            <div class="table-actions">
+                <div class="bulk-actions">
+                    <select name="action" class="form-select">
+                        <option value="">Choose an action...</option>
+                        {% for action in cl.actions %}
+                        <option value="{{ action.0 }}">{{ action.1 }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-secondary">Apply</button>
+                </div>
+
+                <div class="table-info">
+                    <span>{{ cl.result_count }} token{{ cl.result_count|pluralize }} found</span>
+                    {% if cl.paginator %}
+                    <span>Page {{ cl.page_num }} of {{ cl.paginator.num_pages }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                {% result_list cl %}
+            </div>
+
+            <!-- Pagination -->
+            {% if cl.paginator %}
+            <div class="pagination">
+                {% include "admin/pagination.html" %}
+            </div>
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+<style>
+.queue-management {
+    padding: 24px;
+    background: #f8f9fa;
+    min-height: calc(100vh - 64px);
+}
+
+.page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 32px;
+    border-radius: 16px;
+    margin-bottom: 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+}
+
+.header-subtitle {
+    margin: 8px 0 0 0;
+    opacity: 0.9;
+    font-size: 16px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.stat-card {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: transform 0.3s ease;
+    border-left: 4px solid;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card.waiting {
+    border-left-color: #fbbf24;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+}
+
+.stat-card.called {
+    border-left-color: #60a5fa;
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+}
+
+.stat-card.done {
+    border-left-color: #4ade80;
+    background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+}
+
+.stat-card.total {
+    border-left-color: #667eea;
+    background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+}
+
+.stat-icon {
+    background: rgba(255, 255, 255, 0.8);
+    color: #374151;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-number {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    color: #1f2937;
+    line-height: 1;
+}
+
+.stat-label {
+    display: block;
+    font-size: 14px;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+.filters-section {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 32px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.search-input-group {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-input-group i {
+    color: #6b7280;
+    font-size: 16px;
+}
+
+.search-input-group .form-control {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.search-input-group .form-control:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+.filters {
+    margin-top: 20px;
+}
+
+#changelist-filter h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 16px;
+}
+
+#changelist-filter h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    margin-top: 16px;
+    margin-bottom: 8px;
+}
+
+.filter-choice {
+    margin-bottom: 6px;
+}
+
+.filter-choice a {
+    color: #3b82f6;
+    text-decoration: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.filter-choice a:hover {
+    background: #f3f4f6;
+    color: #1e40af;
+}
+
+.filter-choice a.selected {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-weight: 600;
+}
+
+.queue-table-container {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.table-actions {
+    padding: 20px 24px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.bulk-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.form-select {
+    padding: 8px 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 14px;
+    background: white;
+}
+
+.table-info {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+/* Style Django admin result list table */
+.table-responsive #result_list {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+}
+
+.table-responsive #result_list thead th {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 16px 12px;
+    text-align: left;
+    border: none;
+}
+
+.table-responsive #result_list thead th a {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.table-responsive #result_list thead th a:hover {
+    opacity: 0.8;
+}
+
+.table-responsive #result_list tbody td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: middle;
+}
+
+.table-responsive #result_list tbody tr.row1 {
+    background-color: #f8fafc;
+}
+
+.table-responsive #result_list tbody tr.row2 {
+    background-color: white;
+}
+
+.table-responsive #result_list tbody tr:hover {
+    background-color: #f1f5f9;
+}
+
+.table-responsive #result_list .action-checkbox {
+    text-align: center;
+    width: 40px;
+}
+
+/* Status-based row highlighting */
+.table-responsive #result_list tbody tr:hover {
+    background-color: #e0e7ff;
+}
+
+.pagination {
+    padding: 20px 24px;
+    background: #f8f9fa;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination a {
+    color: #6b7280;
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 1px solid #e5e7eb;
+    margin: 0 2px;
+}
+
+.pagination a:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: transparent;
+}
+
+.pagination .this-page {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    border: none;
+}
+
+.btn {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(74, 222, 128, 0.3);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    color: white;
+}
+
+.btn-secondary:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(107, 114, 128, 0.3);
+}
+
+.btn-outline {
+    background: transparent;
+    color: #3b82f6;
+    border: 2px solid #3b82f6;
+}
+
+.btn-outline:hover {
+    background: #3b82f6;
+    color: white;
+    transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    .table-actions {
+        flex-direction: column;
+        gap: 16px;
+        align-items: stretch;
+    }
+
+    .filters {
+        margin-top: 16px;
+    }
+    
+    #changelist-filter {
+        padding: 16px;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-refresh every 30 seconds if on queue page
+    if (window.location.pathname.includes('/admin/hospital/queuetoken/')) {
+        setInterval(function() {
+            // Only refresh if no forms are being edited
+            const forms = document.querySelectorAll('form');
+            const hasUnsavedChanges = Array.from(forms).some(form =>
+                form.classList.contains('has-unsaved-changes') ||
+                form.querySelectorAll('input:focus, select:focus, textarea:focus').length > 0
+            );
+
+            if (!hasUnsavedChanges) {
+                window.location.reload();
+            }
+        }, 30000);
+    }
+});
+</script>
+{% endblock %}

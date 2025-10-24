@@ -1,0 +1,246 @@
+{% extends 'hospital/admin_base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+  .stat-card {
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 20px;
+    border: none;
+  }
+  
+  .stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  }
+  
+  .stat-card .card-body {
+    padding: 25px 15px;
+  }
+  
+  .stat-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+  }
+  
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 10px 0;
+  }
+  
+  .stat-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  .recent-activity {
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin-bottom: 30px;
+  }
+  
+  .activity-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+  }
+  
+  .activity-item:last-child {
+    border-bottom: none;
+  }
+  
+  .activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    color: white;
+    font-size: 1.2rem;
+  }
+  
+  .quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+  }
+  
+  .action-btn {
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  .action-btn i {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+  }
+  
+  .action-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    text-decoration: none;
+    color: white;
+  }
+</style>
+
+<div class="container-fluid">
+  <!-- Welcome Header -->
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
+    <h1 class="h2">Dashboard Overview</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+      <div class="btn-group me-2">
+        <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary">Print</button>
+      </div>
+      <button type="button" class="btn btn-sm btn-primary">
+        <i class="fas fa-sync-alt me-1"></i> Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="card stat-card bg-primary text-white">
+        <div class="card-body text-center">
+          <i class="fas fa-user-md stat-icon"></i>
+          <div class="stat-value">{{ doctor_count }}</div>
+          <div class="stat-label">Total Doctors</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card stat-card bg-success text-white">
+        <div class="card-body text-center">
+          <i class="fas fa-procedures stat-icon"></i>
+          <div class="stat-value">{{ patient_count }}</div>
+          <div class="stat-label">Total Patients</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card stat-card bg-info text-white">
+        <div class="card-body text-center">
+          <i class="fas fa-calendar-check stat-icon"></i>
+          <div class="stat-value">{{ appointment_count }}</div>
+          <div class="stat-label">Appointments</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card stat-card bg-warning text-white">
+        <div class="card-body text-center">
+          <i class="fas fa-hospital stat-icon"></i>
+          <div class="stat-value">{{ department_count }}</div>
+          <div class="stat-label">Departments</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h5 class="mb-3">Quick Actions</h5>
+      <div class="quick-actions">
+        <a href="{% url 'admin-add-doctor' %}" class="action-btn" style="background: linear-gradient(45deg, #4e73df, #224abe);">
+          <i class="fas fa-user-plus"></i>
+          <span>Add Doctor</span>
+        </a>
+        <a href="{% url 'admin-add-patient' %}" class="action-btn" style="background: linear-gradient(45deg, #1cc88a, #13855c);">
+          <i class="fas fa-user-injured"></i>
+          <span>Add Patient</span>
+        </a>
+        <a href="{% url 'admin-appointment' %}" class="action-btn" style="background: linear-gradient(45deg, #36b9cc, #258391);">
+          <i class="fas fa-calendar-plus"></i>
+          <span>New Appointment</span>
+        </a>
+        <a href="{% url 'admin-view-doctor' %}" class="action-btn" style="background: linear-gradient(45deg, #f6c23e, #dda20a);">
+          <i class="fas fa-list"></i>
+          <span>View All Doctors</span>
+        </a>
+        <a href="/hospital/queue/" class="action-btn" style="background: linear-gradient(45deg, #e74c3c, #c0392b);">
+          <i class="fas fa-list-ol"></i>
+          <span>Queue Management</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Recent Doctors -->
+    <div class="col-md-6">
+      <div class="recent-activity">
+        <h5 class="mb-4">Recent Doctors</h5>
+        {% for d in doctors|slice:":5" %}
+        <div class="activity-item">
+          <div class="activity-icon" style="background: #4e73df;">
+            <i class="fas fa-user-md"></i>
+          </div>
+          <div>
+            <h6 class="mb-1">{{ d.get_name }}</h6>
+            <p class="mb-0 text-muted small">{{ d.department }} • {{ d.mobile }}</p>
+            <span class="badge {% if d.status %}bg-success{% else %}bg-warning{% endif %}">
+              {% if d.status %}Active{% else %}Pending Approval{% endif %}
+            </span>
+          </div>
+        </div>
+        {% endfor %}
+        <div class="text-end mt-3">
+          <a href="{% url 'admin-view-doctor' %}" class="btn btn-sm btn-outline-primary">View All Doctors</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Patients -->
+    <div class="col-md-6">
+      <div class="recent-activity">
+        <h5 class="mb-4">Recent Patients</h5>
+        {% for p in patients|slice:":5" %}
+        <div class="activity-item">
+          <div class="activity-icon" style="background: #1cc88a;">
+            <i class="fas fa-user-injured"></i>
+          </div>
+          <div>
+            <h6 class="mb-1">{{ p.get_name }}</h6>
+            <p class="mb-0 text-muted small">{{ p.symptoms|truncatechars:30 }}</p>
+            <span class="badge {% if p.status %}bg-success{% else %}bg-warning{% endif %}">
+              {% if p.status %}Admitted{% else %}On Hold{% endif %}
+            </span>
+          </div>
+        </div>
+        {% endfor %}
+        <div class="text-end mt-3">
+          <a href="{% url 'admin-view-patient' %}" class="btn btn-sm btn-outline-primary">View All Patients</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add this in your HTML head or at the end of the body -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+{% endblock content %}

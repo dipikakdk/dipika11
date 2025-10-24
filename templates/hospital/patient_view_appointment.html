@@ -1,0 +1,62 @@
+{% extends 'hospital/patient_base.html' %}
+{% load static %}
+{% block content %}
+
+<head>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+  <style media="screen">
+    a:link {
+      text-decoration: none;
+    }
+
+    h6 {
+      text-align: center;
+    }
+
+    .row {
+      margin: 100px;
+    }
+  </style>
+</head>
+
+<div class="container">
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h6 class="panel-title">Your Appointments</h6>
+    </div>
+  <table class="table table-hover" id="dev-table">
+    <thead>
+      <tr>
+        <th>Doctor Name</th>
+        <th>Doctor Department</th>
+        <th>Description</th>
+        <th>Date</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    {% for item in appointment_data %}
+    <tr>
+      <td>{{ item.doctor.name|default:"Doctor Not Available" }}</td>
+      <td>{{ item.doctor.department|default:"Department Not Available" }}</td>
+      <td>{{ item.appointment.description|default:"No description" }}</td>
+      <td>{{ item.appointment.appointmentDate|default:"Date not set" }}</td>
+      {% if item.appointment.status %}
+      <td><span class="label label-primary">Confirmed</span></td>
+      {% else %}
+      <td><span class="label label-warning">Pending Approval</span></td>
+      {% endif %}
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="5" class="text-center text-muted">No appointments found.</td>
+    </tr>
+    {% endfor %}
+  </table>
+  </div>
+</div>
+
+
+{% endblock content %}

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    .services-section {
+      background: #f8f9fa;
+      padding: 4rem 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      border-radius: 2px;
+    }
+
+    .section-subtitle {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #6c757d;
+      margin-bottom: 3rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .service-card {
+      background: white;
+      border-radius: 15px;
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      border: 1px solid #e9ecef;
+    }
+
+    .service-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+      border-color: #667eea;
+    }
+
+    .service-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: white;
+      transition: all 0.3s ease;
+    }
+
+    .service-card:nth-child(1) .service-icon {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    .service-card:nth-child(2) .service-icon {
+      background: linear-gradient(135deg, #f093fb, #f5576c);
+    }
+
+    .service-card:nth-child(3) .service-icon {
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+    }
+
+    .service-card:hover .service-icon {
+      transform: scale(1.1);
+    }
+
+    .service-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 1rem;
+    }
+
+    .service-description {
+      color: #6c757d;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .service-button {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      border: none;
+      padding: 0.8rem 2rem;
+      border-radius: 25px;
+      color: white;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 0.9rem;
+    }
+
+    .service-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+      color: white;
+      text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+      .services-section {
+        padding: 3rem 0;
+      }
+
+      .section-title {
+        font-size: 2rem;
+      }
+
+      .services-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .service-card {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="services-section">
+    <div class="container">
+      <h2 class="section-title">Choose Your Portal</h2>
+      <p class="section-subtitle">
+        Select your role to access the appropriate management system designed specifically for your healthcare needs.
+      </p>
+
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-user-shield"></i>
+          </div>
+          <h3 class="service-title">Administrator</h3>
+          <p class="service-description">
+            Complete hospital management system with doctor oversight, patient monitoring, and administrative controls.
+          </p>
+          <a href="/adminclick" class="service-button">Access Admin Panel</a>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-user-md"></i>
+          </div>
+          <h3 class="service-title">Doctor</h3>
+          <p class="service-description">
+            Manage patient appointments, view medical records, and coordinate care with your healthcare team.
+          </p>
+          <a href="/doctorclick" class="service-button">Access Doctor Panel</a>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-user"></i>
+          </div>
+          <h3 class="service-title">Patient</h3>
+          <p class="service-description">
+            Book appointments, view medical history, and manage your healthcare journey with ease and convenience.
+          </p>
+          <a href="/patientclick" class="service-button">Access Patient Portal</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>
