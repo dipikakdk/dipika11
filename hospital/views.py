@@ -10,6 +10,7 @@ from django.conf import settings
 from django.views.decorators.http import require_http_methods
 from django.contrib import messages
 from django.utils import timezone
+from django.core.mail import send_mail
 
 #-----------for checking user is doctor , patient or admin 
 def is_admin(user):
@@ -1312,11 +1313,35 @@ def contactus_view(request):
         sub = forms.ContactusForm(request.POST)
         if sub.is_valid():
             email = sub.cleaned_data['Email']
-            name=sub.cleaned_data['Name']
+            name = sub.cleaned_data['Name']
             message = sub.cleaned_data['Message']
-            send_mail(str(name)+' || '+str(email),message,settings.EMAIL_HOST_USER, settings.EMAIL_RECEIVING_USER, fail_silently = False)
+            
+            # Save to database
+            from .models import Contact
+            Contact.objects.create(
+                name=name,
+                email=email,
+                message=message
+            )
+            
+            # Check if email settings are configured
+            if hasattr(settings, 'EMAIL_HOST_USER') and hasattr(settings, 'EMAIL_RECEIVING_USER'):
+                try:
+                    send_mail(
+                        f'New Contact Form: {name} || {email}',
+                        message,
+                        settings.EMAIL_HOST_USER,
+                        [settings.EMAIL_RECEIVING_USER],
+                        fail_silently=False
+                    )
+                except Exception as e:
+                    # Log the error but don't show to user
+                    import logging
+                    logger = logging.getLogger(__name__)
+                    logger.error(f'Error sending contact email: {str(e)}')
+            
             return render(request, 'hospital/contactussuccess.html')
-    return render(request, 'hospital/contactus.html', {'form':sub})
+    return render(request, 'hospital/contactus.html', {'form': sub})
 
 
 #---------------------------------------------------------------------------------

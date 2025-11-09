@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.core.validators import EmailValidator
 
 
 
@@ -46,6 +47,17 @@ class Patient(models.Model):
         return self.user.id
     def __str__(self):
         return self.user.first_name+" ("+self.symptoms+")"
+
+
+class Contact(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField(validators=[EmailValidator()])
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Message from {self.name} - {self.created_at.strftime('%Y-%m-%d %H:%M')}"
 
 
 class Appointment(models.Model):
