@@ -40,7 +40,7 @@ class Command(BaseCommand):
             
             self.stdout.write(
                 self.style.SUCCESS(
-                    f'Successfully created token #{token.token_number} for {patient.get_name()} ' \n                    f'(Status: {token.get_status_display()}, Department: {token.department})'
+                    f'Successfully created token #{token.token_number} for {patient.get_name()} (Status: {token.get_status_display()}, Department: {token.department})'
                 )
             )
             

@@ -16,7 +16,7 @@ required_images = {
     'admin.png': 'https://cdn-icons-png.flaticon.com/512/2206/2206368.png',
     'doctor.png': 'https://cdn-icons-png.flaticon.com/512/2965/2965879.png',
     'patient.jpg': 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png',
-    'back.jpg': 'https://images.unsplash.com/photo-1505751172876-fa1f5fbc42f8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80'
+    
 }
 
 def download_file(url, filepath):

@@ -1,5 +1,5 @@
-xhtml2pdf>=0.2.17
-Django>=5.0.14,<5.1.0
-django-widget-tweaks>=1.5.0
-mysqlclient>=2.2.0
-Pillow>=10.0.0
+xhtml2pdf>=0.2.17 #for generating PDF reports
+Django>=5.0.14,<5.1.0 
+django-widget-tweaks>=1.5.0 #for form styling
+mysqlclient>=2.2.0 #mysql database connector
+Pillow>=10.0.0 #image processing
